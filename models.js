@@ -6,7 +6,7 @@ const dbURL = process.env.DB_URL;
 export async function getData() {
   try {
     const client = new Client(dbURL);
-    return await client.getAl();
+    return await client.getAll();
   } catch (err) {
     console.error(`Failed to getData. ERR:  ${err}`);
     throw err;
