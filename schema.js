@@ -93,6 +93,59 @@ export const activitySchema = {
   oneOf: [taskSchema, eventSchema],
 };
 
+export const loginSchema = {
+  type: 'object',
+  properties: {
+    username: {
+      type: 'string',
+      format: 'email',
+    },
+    password: {
+      type: 'string',
+      minLength: 8,
+      maxLength: 256,
+    },
+  },
+};
+
+const postUserRequiredFields = ['id', 'name', 'email', 'password'];
+
+export const userSchema = {
+  type: 'object',
+  properties: {
+    id: {
+      type: 'string',
+      format: 'uuid',
+    },
+    name: {
+      type: 'string',
+      minLength: 1,
+      errorMessage: 'You need to give your name',
+    },
+    email: {
+      type: 'string',
+      format: 'email',
+      errorMessage: "That doesn't look like a valid email",
+    },
+    password: {
+      type: 'string',
+      minLength: 8,
+      maxLength: 256,
+      errorMessage: "That doesn't look like a valid password",
+    },
+    role: {
+      type: 'string',
+      enum: ['admin', 'user'],
+      default: 'user',
+    },
+  },
+};
+
+export const userPostSchema = {
+  ...userSchema,
+  required: postUserRequiredFields,
+};
+
 const postJobRequiredFields = [
   'id',
   'status',

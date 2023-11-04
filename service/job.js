@@ -8,9 +8,11 @@ import {
 import { NotFoundError } from '../config/problem-types.js';
 import { ValidationError } from 'express-json-validator-middleware';
 
-export async function listJobs(req, res, next) {
+const prefix = 'job';
+
+export const listJobs = async (req, res, next) => {
   try {
-    const jobs = await getData();
+    const jobs = await getData(prefix);
 
     if (Object.keys(jobs).length === 0) {
       throw new NotFoundError('Jobs not found', 'jobs');
@@ -22,28 +24,29 @@ export async function listJobs(req, res, next) {
   }
 }
 
-export async function createJob(req, res, next) {
+export const createJob = async (req, res, next) => {
   try {
     const { body: job } = req;
 
-    const existingJob = await getById(job.id);
+    const existingJob = await getById(job.id, prefix);
 
     if (existingJob) {
       throw new ValidationError('Job already exists');
     }
 
-    const createdJob = await addData(job);
+    const createdJob = await addData(job, prefix);
+
     res.status(201).json(createdJob);
   } catch (err) {
     next(err);
   }
 }
 
-export async function getJob(req, res, next) {
-  const { id } = req.params;
-
+export const getJob = async (req, res, next) => {
   try {
-    const job = await getById(id);
+    const { id } = req.params;
+
+    const job = await getById(id, prefix);
 
     if (!job) {
       throw new NotFoundError('Job not found', 'job');
@@ -55,7 +58,7 @@ export async function getJob(req, res, next) {
   }
 }
 
-export async function updateJob(req, res, next) {
+export const updateJob = async (req, res, next) => {
   try {
     const { body: job } = req;
     const { id } = req.params;
@@ -64,7 +67,7 @@ export async function updateJob(req, res, next) {
       throw new ValidationError('empty object');
     }
 
-    const updatedJob = await updateData(id, job);
+    const updatedJob = await updateData(id, job, prefix);
 
     if (!updatedJob) {
       throw new NotFoundError('No record to update', 'job');
@@ -76,11 +79,11 @@ export async function updateJob(req, res, next) {
   }
 }
 
-export async function deleteJob(req, res, next) {
+export const deleteJob = async (req, res, next) => {
   try {
     const { id } = req.params;
 
-    const deletedJob = await removeData(id);
+    const deletedJob = await removeData(id, prefix);
 
     if (!deletedJob) {
       throw new NotFoundError('No record to delete', 'record');

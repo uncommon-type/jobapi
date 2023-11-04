@@ -5,29 +5,47 @@ import { ServerError } from './config/problem-types.js';
 
 const dbURL = process.env.DB_URL;
 
-export async function getData() {
+export const getBy = async (prefix, field, fieldValue) => {
+  try {
+    const records = await getData(prefix);
+
+    const entry = Object.values(records).find((record) => {
+      return record[field] === fieldValue;
+    });
+
+    return entry ? entry : null;
+  } catch (err) {
+    throw new ServerError(`Failed to getBy - ${err.message}`);
+  }
+}
+
+export const getData = async (prefix) => {
   try {
     const client = new Client(dbURL);
-    return await client.getAll();
+    const data = await client.getAll();
+
+    return Object.fromEntries(
+      Object.entries(data).filter(([key]) => key.startsWith(prefix))
+    );
   } catch (err) {
     throw new ServerError(`Failed to getData - ${err.message}`);
   }
 }
 
-export async function addData(payload) {
+export const addData = async (payload, prefix) => {
   try {
     const client = new Client(dbURL);
-    await client.set(payload.id, payload);
+    await client.set(`${prefix}:${payload.id}`, payload);
     return payload;
   } catch (err) {
     throw new ServerError(`Failed to addData - ${err.message}`);
   }
 }
 
-export async function getById(id) {
+export const getById = async (id, prefix) => {
   try {
     const client = new Client(dbURL);
-    const record = await client.get(id);
+    const record = await client.get(`${prefix}:${id}`);
 
     if (!record) {
       return null;
@@ -39,9 +57,9 @@ export async function getById(id) {
   }
 }
 
-export async function updateData(id, payload) {
+export const updateData = async (id, payload, prefix) => {
   try {
-    const recordToUpdate = await getById(id);
+    const recordToUpdate = await getById(id, prefix);
 
     if (!recordToUpdate) {
       return null;
@@ -50,7 +68,7 @@ export async function updateData(id, payload) {
     const updatedRecord = { ...recordToUpdate, ...payload };
 
     const client = new Client(dbURL);
-    await client.set(id, updatedRecord);
+    await client.set(`${prefix}:${id}`, updatedRecord);
 
     return updatedRecord;
   } catch (err) {
@@ -58,20 +76,20 @@ export async function updateData(id, payload) {
   }
 }
 
-export async function removeData(id) {
+
+export const removeData = async (id, prefix) => {
   try {
-    const recordToDelete = await getById(id);
+    const recordToDelete = await getById(id, prefix);
 
     if (!recordToDelete) {
       return null;
     }
 
     const client = new Client(dbURL);
-    await client.delete(id);
+    await client.delete(`${prefix}:${id}`);
 
     return {};
   } catch (err) {
     throw new ServerError(`Failed to removeData.  ERR: ${err.message}`);
   }
 }
-
