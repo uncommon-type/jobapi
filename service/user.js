@@ -1,3 +1,6 @@
+import { createHash } from 'crypto';
+import jwt from 'jsonwebtoken';
+
 import {
   getData,
   addData,
@@ -6,26 +9,40 @@ import {
   removeData,
   getBy,
 } from '../models.js';
+import { secretKey } from '../middleware/jwt-validator.js';
 import { NotFoundError, LoginError } from '../config/problem-types.js';
 import { ValidationError } from 'express-json-validator-middleware';
 
 const prefix = 'user';
+const salt = process.env.SALT;
 
 export const login = async (req, res, next) => {
   try {
-    const { username } = req.body;
+    const { username, password } = req.body;
 
     const user = await getBy(prefix, 'email', username);
 
     if (user) {
-      return res.json(user);
+      const hash = createHash('sha256')
+        .update(password + salt)
+        .digest('hex');
+
+      if (hash === user.password) {
+        const token = jwt.sign(
+          { userId: user.id, email: user.email },
+          secretKey,
+          { expiresIn: '1h' }
+        );
+
+        return res.json({ token });
+      }
     }
 
     throw new LoginError();
   } catch (err) {
     next(err);
   }
-}
+};
 
 export const createUser = async (req, res, next) => {
   try {
@@ -37,12 +54,17 @@ export const createUser = async (req, res, next) => {
       throw new ValidationError('User already exists');
     }
 
-    const createdUser = await addData(user, prefix);
-    res.status(201).json(createdUser);
+    user.password = createHash('sha256')
+      .update(user.password + salt)
+      .digest('hex');
+
+    const { role } = await addData(user, prefix);
+
+    res.status(201).json({ role });
   } catch (err) {
     next(err);
   }
-}
+};
 
 export const listUsers = async (req, res, next) => {
   try {
@@ -56,7 +78,7 @@ export const listUsers = async (req, res, next) => {
   } catch (err) {
     next(err);
   }
-}
+};
 
 export const getUser = async (req, res, next) => {
   try {
@@ -71,7 +93,7 @@ export const getUser = async (req, res, next) => {
   } catch (err) {
     next(err);
   }
-}
+};
 
 export const updateUser = async (req, res, next) => {
   try {
@@ -92,7 +114,7 @@ export const updateUser = async (req, res, next) => {
   } catch (err) {
     next(err);
   }
-}
+};
 
 export const deleteUser = async (req, res, next) => {
   try {
@@ -108,4 +130,4 @@ export const deleteUser = async (req, res, next) => {
   } catch (err) {
     next(err);
   }
-}
+};

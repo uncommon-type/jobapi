@@ -1,5 +1,4 @@
 import Client from '@replit/database';
-import 'dotenv/config';
 
 import { ServerError } from './config/problem-types.js';
 
@@ -17,7 +16,7 @@ export const getBy = async (prefix, field, fieldValue) => {
   } catch (err) {
     throw new ServerError(`Failed to getBy - ${err.message}`);
   }
-}
+};
 
 export const getData = async (prefix) => {
   try {
@@ -30,7 +29,7 @@ export const getData = async (prefix) => {
   } catch (err) {
     throw new ServerError(`Failed to getData - ${err.message}`);
   }
-}
+};
 
 export const addData = async (payload, prefix) => {
   try {
@@ -40,7 +39,7 @@ export const addData = async (payload, prefix) => {
   } catch (err) {
     throw new ServerError(`Failed to addData - ${err.message}`);
   }
-}
+};
 
 export const getById = async (id, prefix) => {
   try {
@@ -55,7 +54,7 @@ export const getById = async (id, prefix) => {
   } catch (err) {
     throw new ServerError(`Failed to getById  - ${err.message}`);
   }
-}
+};
 
 export const updateData = async (id, payload, prefix) => {
   try {
@@ -74,8 +73,7 @@ export const updateData = async (id, payload, prefix) => {
   } catch (err) {
     throw new ServerError(`Failed to updateData. ERR: ${err.message}`);
   }
-}
-
+};
 
 export const removeData = async (id, prefix) => {
   try {
@@ -92,4 +90,5 @@ export const removeData = async (id, prefix) => {
   } catch (err) {
     throw new ServerError(`Failed to removeData.  ERR: ${err.message}`);
   }
-}
+};
+

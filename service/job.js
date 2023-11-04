@@ -22,7 +22,7 @@ export const listJobs = async (req, res, next) => {
   } catch (err) {
     next(err);
   }
-}
+};
 
 export const createJob = async (req, res, next) => {
   try {
@@ -40,7 +40,7 @@ export const createJob = async (req, res, next) => {
   } catch (err) {
     next(err);
   }
-}
+};
 
 export const getJob = async (req, res, next) => {
   try {
@@ -56,7 +56,7 @@ export const getJob = async (req, res, next) => {
   } catch (err) {
     next(err);
   }
-}
+};
 
 export const updateJob = async (req, res, next) => {
   try {
@@ -77,7 +77,7 @@ export const updateJob = async (req, res, next) => {
   } catch (err) {
     next(err);
   }
-}
+};
 
 export const deleteJob = async (req, res, next) => {
   try {
@@ -93,4 +93,4 @@ export const deleteJob = async (req, res, next) => {
   } catch (err) {
     next(err);
   }
-}
+};
