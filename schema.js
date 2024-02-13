@@ -1,6 +1,6 @@
 export const companySchema = {
   type: 'object',
-  required: ['id', 'name', 'description', 'size'],
+  required: ['id', 'name'],
   properties: {
     id: {
       type: 'string',
@@ -15,7 +15,7 @@ export const companySchema = {
       minLength: 1,
     },
     size: {
-      type: 'integer',
+      type: ['integer', 'null'],
       minimum: 1,
     },
   },
