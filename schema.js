@@ -148,23 +148,9 @@ export const userPostSchema = {
 
 const postJobRequiredFields = [
   'id',
-  'status',
   'jobTitle',
-  'employmentType',
-  'location',
   'company',
-  'description',
-  'postUrl',
-  'dateCreated',
-  'salary',
-  'salaryBandMin',
-  'salaryBandMax',
-  'activities',
-  'benefits',
-  'startDate',
-  'probation',
-  'pros',
-  'cons',
+  'status'
 ];
 
 export const jobSchema = {
@@ -178,12 +164,12 @@ export const jobSchema = {
     status: {
       type: 'string',
       enum: [
-        'wished',
-        'applied',
-        'interviewed',
-        'offer received',
-        'rejected',
-        'closed',
+        'Interested',
+        'Applied',
+        'Interviewed',
+        'Offer received',
+        'Rejected',
+        'Closed',
       ],
     },
     jobTitle: {
@@ -193,52 +179,34 @@ export const jobSchema = {
     employmentType: {
       type: 'string',
       enum: [
-        'full-time',
-        'part-time',
-        'temporary',
-        'internship',
-        'apprenticeship',
-        'contractor',
+        'Full-time',
+        'Part-time',
+        'Temporary',
+        'Internship',
+        'Apprenticeship',
+        'Contractor',
       ],
     },
     location: {
       type: 'string',
-      enum: ['hybrid', 'in-office', 'remote'],
+      enum: ['Hybrid', 'In-office', 'Remote'],
     },
     company: companySchema,
     description: {
       type: 'string',
       minLength: 1,
     },
-    postUrl: {
-      type: 'string',
-      format: 'uri',
-    },
-    dateCreated: {
-      type: 'string',
-      format: 'date-time',
-    },
     salary: {
-      anyOf: [
-        { type: 'string', pattern: '[-+]?[0-9]*.?[0-9]+' },
-        { type: 'number' },
-      ],
-    },
-    salaryBandMin: {
-      anyOf: [
-        { type: 'string', pattern: '[-+]?[0-9]*.?[0-9]+' },
-        { type: 'number' },
-      ],
-    },
-    salaryBandMax: {
-      anyOf: [
-        { type: 'string', pattern: '[-+]?[0-9]*.?[0-9]+' },
-        { type: 'number' },
-      ],
+      type: ['integer', 'null'],
+      exclusiveMinimum: 0,
+      exclusiveMaximum: 1000000,
     },
     activities: {
       type: 'array',
-      items: activitySchema,
+      items: {
+        type: 'string',
+        format: 'uuid'
+      }
     },
     benefits: {
       type: 'string',
@@ -249,10 +217,6 @@ export const jobSchema = {
       format: 'date-time',
     },
     probation: {
-      type: 'string',
-      minLength: 1,
-    },
-    notes: {
       type: 'string',
       minLength: 1,
     },
