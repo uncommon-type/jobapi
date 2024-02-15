@@ -36,61 +36,55 @@ export const tagSchema = {
   },
 };
 
-const commonActivitySchema = {
+export const activitySchema = {
   type: 'object',
-  required: ['id', 'type', 'title', 'description', 'done'], //done
   properties: {
     id: {
       type: 'string',
-      format: 'uuid',
+      format: 'uuid'
     },
     type: {
       type: 'string',
-      enum: ['task', 'event'],
+      enum: ['event', 'task']
     },
     title: {
-      type: 'string',
-      minLength: 1,
+      type: 'string'
     },
     description: {
-      type: 'string',
-      minLength: 1,
-    },
-  },
-};
-
-export const taskSchema = {
-  ...commonActivitySchema,
-  required: ['done'],
-  properties: {
-    type: {
-      type: 'string',
-      const: 'task',
+      type: 'string'
     },
     done: {
-      type: 'boolean',
-    },
-  },
-};
-
-export const eventSchema = {
-  ...commonActivitySchema,
-  required: ['startDate', 'done'],
-  properties: {
-    type: {
-      type: 'string',
-      const: 'event',
+      type: 'boolean'
     },
     startDate: {
-      type: 'string',
-      format: 'date-time',
-    },
+      type: 'string', format: 'date-time'
+    }
   },
-};
-
-export const activitySchema = {
-  type: 'object',
-  oneOf: [taskSchema, eventSchema],
+  oneOf: [
+    {
+      properties: {
+        type: {
+          const: 'event'
+        },
+        startDate: {
+          type: 'string',
+          format: 'date-time'
+        }
+      },
+      required: ['startDate']
+    },
+    {
+      properties: {
+        type: {
+          const: 'task'
+        }
+      },
+      not: {
+        required: ['startDate']
+      }
+    }
+  ],
+  additionalProperties: false
 };
 
 export const loginSchema = {
