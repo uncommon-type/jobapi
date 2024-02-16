@@ -4,9 +4,9 @@ import { ServerError } from './config/problem-types.js';
 
 const dbURL = process.env.DB_URL;
 
-export const getBy = async (prefix, field, fieldValue) => {
+export const getBy = async (tableName, field, fieldValue) => {
   try {
-    const records = await getData(prefix);
+    const records = await getData(tableName);
 
     const entry = Object.values(records).find((record) => {
       return record[field] === fieldValue;
@@ -18,33 +18,33 @@ export const getBy = async (prefix, field, fieldValue) => {
   }
 };
 
-export const getData = async (prefix) => {
+export const getData = async (tableName) => {
   try {
     const client = new Client(dbURL);
     const data = await client.getAll();
 
     return Object.fromEntries(
-      Object.entries(data).filter(([key]) => key.startsWith(prefix))
+      Object.entries(data).filter(([key]) => key.startsWith(tableName))
     );
   } catch (err) {
     throw new ServerError(`Failed to getData - ${err.message}`);
   }
 };
 
-export const addData = async (payload, prefix) => {
+export const addData = async (payload, tableName) => {
   try {
     const client = new Client(dbURL);
-    await client.set(`${prefix}:${payload.id}`, payload);
+    await client.set(`${tableName}:${payload.id}`, payload);
     return payload;
   } catch (err) {
     throw new ServerError(`Failed to addData - ${err.message}`);
   }
 };
 
-export const getById = async (id, prefix) => {
+export const getById = async (id, tableName) => {
   try {
     const client = new Client(dbURL);
-    const record = await client.get(`${prefix}:${id}`);
+    const record = await client.get(`${tableName}:${id}`);
 
     if (!record) {
       return null;
@@ -56,9 +56,9 @@ export const getById = async (id, prefix) => {
   }
 };
 
-export const updateData = async (id, payload, prefix) => {
+export const updateData = async (id, payload, tableName) => {
   try {
-    const recordToUpdate = await getById(id, prefix);
+    const recordToUpdate = await getById(id, tableName);
 
     if (!recordToUpdate) {
       return null;
@@ -67,7 +67,7 @@ export const updateData = async (id, payload, prefix) => {
     const updatedRecord = { ...recordToUpdate, ...payload };
 
     const client = new Client(dbURL);
-    await client.set(`${prefix}:${id}`, updatedRecord);
+    await client.set(`${tableName}:${id}`, updatedRecord);
 
     return updatedRecord;
   } catch (err) {
@@ -75,16 +75,16 @@ export const updateData = async (id, payload, prefix) => {
   }
 };
 
-export const removeData = async (id, prefix) => {
+export const removeData = async (id, tableName) => {
   try {
-    const recordToDelete = await getById(id, prefix);
+    const recordToDelete = await getById(id, tableName);
 
     if (!recordToDelete) {
       return null;
     }
 
     const client = new Client(dbURL);
-    await client.delete(`${prefix}:${id}`);
+    await client.delete(`${tableName}:${id}`);
 
     return {};
   } catch (err) {
