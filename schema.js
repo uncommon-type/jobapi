@@ -15,7 +15,7 @@ export const companySchema = {
       minLength: 1,
     },
     size: {
-      type: ['integer', 'null'],
+      type: 'integer',
       minimum: 1,
     },
   },
@@ -160,7 +160,7 @@ export const jobSchema = {
       enum: [
         'Interested',
         'Applied',
-        'Interviewed',
+        'Interviewing',
         'Offer received',
         'Rejected',
         'Closed',
